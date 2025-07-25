@@ -17,6 +17,7 @@ db_name = 'Movies.db'
 table_name = 'Top_50'
 csv_path = 'top_50_films.csv'
 df = pd.DataFrame(columns=["Film","Year","Rotten Tomatoes' Top 100"])
+table_attr = []
 count = 0
 
 # Code for ETL operations on Country-GDP data
@@ -44,7 +45,7 @@ def extract(url, table_attribs):
     rows = tables[0].find_all('tr')
 
     for row in rows:
-        if count < 25 :
+        if count < 10 :
             col = row.find_all('td')
             if len(col)!=0:
                 data_dict = {"Film": str(col[1].contents[0]),
