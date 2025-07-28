@@ -67,23 +67,35 @@ def load_to_db(df, sql_connection, table_name):
     ''' This function saves the final data frame to a database
     table with the provided name. Function returns nothing.'''
 
+    df.to_sql(table_name, sql_connection, if_exists='replace', index=False)
+    conn.close()
+
+
 def run_query(query_statement, sql_connection):
     ''' This function runs the query on the database table and
     prints the output on the terminal. Function returns nothing. '''
 
-''' Here, you define the required entities and call the relevant
-functions in the correct order to complete the project. Note that this
-portion is not inside any function.'''
+    ''' Here, you define the required entities and call the relevant
+    functions in the correct order to complete the project. Note that this
+    portion is not inside any function.'''
+
+    
 
 
 log_progress("Preliminaries complete. Initiating ETL process")
 df_extracted = extract(url, table_attr)
 # print(df_extracted[['Bank Name', 'MC_USD_Billion']])
+
 log_progress("Data extraction complete. Initiating Transformation process")
 transformed_df = transform(df_extracted, "exchange_rate.csv")
 log_progress("Data transformation complete. Initiating Loading process")
 # print(transformed_df[['Bank Name', 'MC_USD_Billion', 'MC_GBP_Billion', 'MC_EUR_Billion', 'MC_INR_Billion']])
 # print(transformed_df[['MC_EUR_Billion']])
+
 loaded_df = load_to_csv(transformed_df, csv_path)
 log_progress("Data saved to CSV file")
 
+log_progress("SQL Connection initiated")
+conn = sqlite3.connect(db_name)
+load_to_db(df_extracted, conn, table_name)
+log_progress("Data loaded to Database as a table, Executing queries")
