@@ -11,9 +11,6 @@ table_name = 'Largest_banks'
 csv_path = './Largest_banks_data.csv'
 table_attr = ["Bank Name","MC_USD_Billion"]
 
-
-
-
 def log_progress(message):
     ''' This function logs the mentioned message of a given stage of the
     code execution to a log file. Function returns nothing'''
