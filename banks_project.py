@@ -1,6 +1,7 @@
 import requests
 import sqlite3
 import pandas as pd
+import numpy as np
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -44,11 +45,16 @@ def extract(url, table_attribs, limit=25):
     return pd.DataFrame(data_list)  # Create DataFrame once
 
 def transform(df, csv_path):
-    ''' This function accesses the CSV file for exchange rate
-    information, and adds three columns to the data frame, each
-    containing the transformed version of Market Cap column to
-    respective currencies'''
+    ''' This function converts the market capitalization values from USD to GBP, EUR, and INR
+    using exchange rates from a CSV file. '''
 
+    exchange_rate_df = pd.read_csv(csv_path)
+    exchange_rate = exchange_rate_df.set_index('Currency').to_dict()['Rate']
+    
+    df['MC_GBP_Billion'] = [np.round(x * exchange_rate['GBP'], 2) for x in df['MC_USD_Billion']]
+    df['MC_EUR_Billion'] = [np.round(x * exchange_rate['EUR'], 2) for x in df['MC_USD_Billion']]
+    df['MC_INR_Billion'] = [np.round(x * exchange_rate['INR'], 2) for x in df['MC_USD_Billion']]
+    
     return df
 
 def load_to_csv(df, output_path):
@@ -69,5 +75,9 @@ portion is not inside any function.'''
 
 
 log_progress("Preliminaries complete. Initiating ETL process")
-extra = extract(url, table_attr)
-print(extra)
+df_extracted = extract(url, table_attr)
+print(df_extracted[['Bank Name', 'MC_USD_Billion']])
+log_progress("Data extraction complete. Initiating Transformation process")
+transformed_df = transform(df_extracted, "exchange_rate.csv")
+log_progress("Data transformation complete. Initiating Loading process")
+print(transformed_df[['Bank Name', 'MC_USD_Billion', 'MC_GBP_Billion', 'MC_EUR_Billion', 'MC_INR_Billion']])

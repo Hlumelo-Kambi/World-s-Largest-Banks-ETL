@@ -1,6 +1,3 @@
-2025-Jul-25-14:31:03,Preliminaries complete. Initiating ETL process
-2025-Jul-28-11:49:30, Preliminaries complete. Initiating ETL process
-2025-Jul-28-13:02:31, Preliminaries complete. Initiating ETL process
-2025-Jul-28-13:38:26, Preliminaries complete. Initiating ETL process
-2025-Jul-28-13:39:54, Preliminaries complete. Initiating ETL process
-2025-Jul-28-13:47:54, Preliminaries complete. Initiating ETL process
+2025-Jul-28-14:42:35, Preliminaries complete. Initiating ETL process
+2025-Jul-28-14:42:36, Data extraction complete. Initiating Transformation process
+2025-Jul-28-14:42:36, Data transformation complete. Initiating Loading process
