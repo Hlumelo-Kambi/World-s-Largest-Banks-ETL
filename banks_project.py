@@ -1,26 +1,16 @@
-# Importing the required libraries
 import requests
 import sqlite3
 import pandas as pd
-import xml.etree.ElementTree as ET
-import glob
-from datetime import datetime
 from bs4 import BeautifulSoup
-
-print("Hello, World!")
+from datetime import datetime
 
 log_file = 'code_log.txt'
-target_file = 'transformed_data.csv'
-
 url = 'https://web.archive.org/web/20230908091635/https://en.wikipedia.org/wiki/List_of_largest_banks'
-db_name = 'Movies.db'
-table_name = 'Top_50'
-csv_path = 'top_50_films.csv'
-df = pd.DataFrame(columns=["Film","Year","Rotten Tomatoes' Top 100"])
-table_attr = []
-count = 0
+db_name = 'Banks.db'
+table_name = 'Largest_banks'
+csv_path = './Largest_banks_data.csv'
+table_attr = ["Bank Name","MC_USD_Billion"]
 
-# Code for ETL operations on Country-GDP data
 
 
 
@@ -32,31 +22,31 @@ def log_progress(message):
     now = datetime.now() # get current timestamp 
     timestamp = now.strftime(timestamp_format) 
     with open(log_file,"a") as f: 
-        f.write(timestamp + ',' + message + '\n')
+        f.write(timestamp + ', ' + message + '\n') 
 
 def extract(url, table_attribs):
     ''' This function aims to extract the required
     information from the website and save it to a data frame. The
     function returns the data frame for further processing. '''
 
+    df = pd.DataFrame(columns=table_attribs)
     html_page = requests.get(url).text
     data = BeautifulSoup(html_page, 'html.parser')
     tables = data.find_all('tbody')
     rows = tables[0].find_all('tr')
+    count = 0
 
     for row in rows:
-        if count < 10 :
+        if count < 25 :
             col = row.find_all('td')
             if len(col)!=0:
-                data_dict = {"Film": str(col[1].contents[0]),
-                            "Year": int(col[2].contents[0]),
-                            "Rotten Tomatoes' Top 100":str(col[3].contents[0])}
+                data_dict = {"Bank Name": str(col[1].get_text(strip=True)),
+                            "MC_USD_Billion": float(col[2].contents[0])}
                 df1 = pd.DataFrame(data_dict, index=[0])
                 df = pd.concat([df,df1], ignore_index=True)
                 count+=1
         else:
             break
-
     return df
 
 def transform(df, csv_path):
@@ -82,3 +72,8 @@ def run_query(query_statement, sql_connection):
 ''' Here, you define the required entities and call the relevant
 functions in the correct order to complete the project. Note that this
 portion is not inside any function.'''
+
+
+log_progress("Preliminaries complete. Initiating ETL process")
+extra = extract(url, table_attr)
+print(extra)
