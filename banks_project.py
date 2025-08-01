@@ -68,20 +68,22 @@ def load_to_db(df, sql_connection, table_name):
     table with the provided name. Function returns nothing.'''
 
     df.to_sql(table_name, sql_connection, if_exists='replace', index=False)
-    conn.close()
+    
 
 
 def run_query(query_statement, sql_connection):
     ''' This function runs the query on the database table and
     prints the output on the terminal. Function returns nothing. '''
-
-    ''' Here, you define the required entities and call the relevant
-    functions in the correct order to complete the project. Note that this
-    portion is not inside any function.'''
-
+    df = pd.read_sql_query(query_statement, sql_connection)
+    print(df)
     
 
 
+''' Here, you define the required entities and call the relevant
+functions in the correct order to complete the project. Note that this
+portion is not inside any function.'''
+
+    
 log_progress("Preliminaries complete. Initiating ETL process")
 df_extracted = extract(url, table_attr)
 # print(df_extracted[['Bank Name', 'MC_USD_Billion']])
@@ -99,3 +101,10 @@ log_progress("SQL Connection initiated")
 conn = sqlite3.connect(db_name)
 load_to_db(df_extracted, conn, table_name)
 log_progress("Data loaded to Database as a table, Executing queries")
+
+run_query("SELECT * FROM Largest_banks", conn)
+run_query("SELECT AVG(MC_GBP_Billion) FROM Largest_banks", conn)
+run_query('SELECT "Bank Name" from Largest_banks LIMIT 5', conn)
+conn.close()
+log_progress("Process Completed")
+log_progress("Server Connection closed")
