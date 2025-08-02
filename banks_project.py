@@ -76,14 +76,8 @@ def run_query(query_statement, sql_connection):
     prints the output on the terminal. Function returns nothing. '''
     df = pd.read_sql_query(query_statement, sql_connection)
     print(df)
-    
 
 
-''' Here, you define the required entities and call the relevant
-functions in the correct order to complete the project. Note that this
-portion is not inside any function.'''
-
-    
 log_progress("Preliminaries complete. Initiating ETL process")
 df_extracted = extract(url, table_attr)
 # print(df_extracted[['Bank Name', 'MC_USD_Billion']])
